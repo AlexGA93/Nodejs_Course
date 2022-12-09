@@ -1,0 +1,7 @@
+# Using VS Code 'REST Client' extension to test HTTP requests
+
+# POST http://localhost:5000
+
+# PUT http://localhost:5000
+
+DELETE http://localhost:5000
