@@ -1,0 +1,43 @@
+GET http://localhost:3000/api/programming HTTP/1.1
+
+###
+
+POST http://localhost:3000/api/programming HTTP/1.1
+Content-Type: application/json
+
+{
+    "id": 4,
+    "title": "Learn JavaScript",
+    "language": "javascript",
+    "views": 888888,
+    "level": "Advanced"
+}
+
+###
+
+PUT http://localhost:3000/api/programming/1 HTTP/1.1
+Content-Type: application/json
+
+{
+    "id": 1,
+    "title": "Learn Python 3.0",
+    "language": "python",
+    "views": 15000,
+    "level": "basic"
+}
+
+###
+
+
+PATCH http://localhost:3000/api/programming/1 HTTP/1.1
+Content-Type: application/json
+
+{
+    "level": "advanced"
+}
+
+###
+
+DELETE http://localhost:3000/api/programming/1 HTTP/1.1
+Content-Type: application/json
+

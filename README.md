@@ -485,8 +485,25 @@ npm install --save-dev nodemon          # or using yarn: yarn add nodemon -D
 ```
 
 ## Express.js
-
 ### First Steps
+As first steps We're going to init our node.js proyecy in a new and empty folder entering the following command and create our package.json file:
+```
+npm init -y
+```
+The second step is installing our Node.js app (Express.js):
+```
+npm i express
+``` 
+In addtion we can add a start script in pour package json to  init our server with nodemon. In this case we want to use de command "**npm run dev**":
+```
+ "scripts": {
+    "dev": "nodemon app.js"
+  },
+```
+
+With the previous steps We can create our 'app.js' where we'll define our server:
+```
+```
 ### Adding Routes to Express.js
 ### Route and query parameters
 ### Express Routers
