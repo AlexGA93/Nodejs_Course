@@ -40,4 +40,4 @@ const server = http.createServer(
 
 // server listening at a defined port
 const PORT = 5000;
-server.listen(PORT, ()=>console.log(`Server listening at port ${PORT}`))
+server.listen(PORT, ()=>console.log(`Server listening at port ${PORT}`));

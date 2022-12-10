@@ -11,6 +11,17 @@
 - [Promises](#promises)
     - [Synchronous Promises](#synchronous-promises)
     - [Async/Await Promises](#async--await-promises)
+- [Http & Routes](#http--routes) 
+    - [http Module](#http-module)
+    - [Url Module](#url-module)
+- [Routing: Node.js HTTP Server](#routing-nodejs-http-server)
+- [Nodemon](#nodemon)
+- [Express.js](#expressjs)
+    - [First Steps](#first-steps)
+    - [Adding Routes to Express.js](#adding-routes-to-expressjs)
+    - [Route and query parameters](#route-and-query-parameters)
+    - [Express Routers](#express-routers)
+    - [C.R.U.D](#crud)
 
 ## Creating and Importing Javascript Modules
 We can create  custom modules with some functionallities that can be exported and imported in any other javascript module.
@@ -282,3 +293,201 @@ const orderingProduct = async (product) => {
 
 orderingProduct('cup');
 ```
+## Http & Routes
+In this section We're going to study the necessary modules to create our first **Node.js Server**.
+
+### http Module
+The HTTP interfaces in Node.js are designed to support many features of the protocol which have been traditionally difficult to use. In particular, large, possibly chunk-encoded, messages. The interface is careful to never buffer entire requests or responses, so the user is able to stream data.
+
+To create our first http server We'll define 3 basics steps:
+- Import the http module:
+    ```
+    // Node.js server
+    const http = require('http');
+    ```
+- Create the server instance:
+    ```
+    const server = http.createServer(
+        // every time our server recieves a request it will execute this functionallity
+        (request, response) => {
+            // end response sending a response
+            response.end('Welcome to my Node.js server');
+        }
+    );
+    ```
+**Note:** We can access to the request and response important data: request, request's url, request's method, request's headers, response, response's status code, etc.
+
+- Define a listening server's instance at a port:
+    ```
+    // server listening at a defined port
+    const PORT = 5000;
+    server.listen(PORT, ()=>console.log(`Server listening at port ${PORT}`));
+    ```
+
+We can see the full example to a simple Node.js http server:
+```
+// Node.js server
+const http = require('http');
+
+// creating server instance
+const server = http.createServer(
+    // every time our server recieves a request it will execute this functionallity
+    (request, response) => {
+        // end response sending a response
+        response.end('Welcome to my Node.js server');
+    }
+);
+
+// server listening at a defined port
+const PORT = 5000;
+server.listen(PORT, ()=>console.log(`Server listening at port ${PORT}`));
+```
+### Url Module
+A URL string is a structured string containing multiple meaningful components. When parsed, a URL object is returned containing properties for each of these components.
+
+We can see a simple example to stract the information from a url string:
+```
+const url = 'https://www.example.org/courses/programming?sort=visits&level=1';
+const myUrl = new URL(url);
+
+// hostname
+console.log(myUrl.hostname); // www.example.org
+console.log(myUrl.host); // www.example.org
+
+console.log(myUrl.pathname); // /courses/programming
+
+console.log(myUrl.searchParams);// URLSearchParams { 'sort' => 'visits', 'level' => '1' }
+console.log(myUrl.searchParams.get('sort')); // visits
+console.log(myUrl.searchParams.get('level')); // 1
+```
+## Routing: Node.js HTTP Server
+
+We're going to create a mid-simple HTTP server following the previous steps:
+
+- Import the http module and ddbb:
+    ```
+    // importing http module
+    const http = require('http');
+
+    // importing courses
+    const courses = require('./courses');
+    ```
+- Create the server instance:
+    ```
+    /** HTTP Server  **/
+    const server = http.createServer((request, response)=>{
+        const {method} = request;
+
+        // check the request's method
+        switch(method){
+            case 'GET':
+                return dealGetRequests(request, response);
+            case 'POST':
+                return dealPostRequests(request, response);
+            default:
+                res.statusCode = 501;
+                res.end(`The used method cannot be dealed by the server: ${method}`);
+        }
+    });
+    ```
+- Dealing with routes:
+    ```
+    const dealGetRequests = (req, res) => {
+        const path = req.url;
+        if(path === '/'){
+            res.writeHead(200, {'Content-type':'application/json'});
+            res.statusCode = 200;
+            return res.end('Welcome to my Node.js server and API!')
+        }else if(path === '/api/courses'){
+            res.statusCode = 200;
+            return res.end(JSON.stringify(courses.infoCourses));
+        }else if(path === '/api/courses/programming'){
+            res.statusCode = 200;
+            return res.end(JSON.stringify(courses.infoCourses.programming));
+        }
+
+        res.statusCode = 404;
+        res.end('Request content not found!');
+    };
+
+    const dealPostRequests = (req, res) => {
+        const path = req.url;
+        console.log(path);
+
+        if (path === '/api/courses/programming') {
+            res.statusCode = 200;
+            return res.end('Server recieved a POST request');
+        }
+    };
+    ```
+- Define a listening server's instance at a port:
+    ```
+    const PORT = 5000;
+
+    // server listening
+    server.listen(PORT, ()=>console.log(`Server listening at port ${PORT}`));
+    ```
+- **NOTE:** We are using a JSON file to emulate a ddbb to operate with the server's route
+    ```
+    let infoCourses = {
+        'programming': [
+            {
+                id: 1,
+                title: 'Learn Python',
+                Language: 'Python',
+                visits: 1500,
+                level: 'basic'
+            },
+            {
+                id: 2,
+                title: 'Learn Typescript',
+                Language: 'Typescript',
+                visits: 4500,
+                level: 'advanced'
+            },
+            {
+                id: 3,
+                title: 'Learn Angular',
+                Language: 'Typescript/Angular.js',
+                visits: 49500,
+                level: 'expert'
+            }
+        ],
+        'maths': [
+            {
+                id: 1,
+                title: 'Learn Calculus',
+                Language: 'Calculus',
+                visits: 4958800,
+                level: 'expert'
+            }
+        ]
+    }
+
+    module.exports = {infoCourses};
+    ```
+
+## Nodemon
+
+nodemon is a tool that helps develop Node.js based applications by automatically restarting the node application when file changes in the directory are detected.
+
+nodemon does not require any additional changes to your code or method of development. nodemon is a replacement wrapper for node. To use nodemon, replace the word node on the command line when executing your script.
+
+- Installation
+Either through cloning with git or by using npm (the recommended way):
+```
+npm install -g nodemon      # or using yarn: yarn global add nodemon
+```
+
+You can also install nodemon as a development dependency:
+```
+npm install --save-dev nodemon          # or using yarn: yarn add nodemon -D
+```
+
+## Express.js
+
+### First Steps
+### Adding Routes to Express.js
+### Route and query parameters
+### Express Routers
+### C.R.U.D
