@@ -5,7 +5,7 @@ let courses = {
       title: 'Learn Python',
       language: 'python',
       views: 15000,
-      level: 'basico'
+      level: 'basic'
     },
     {
       id: 2,

@@ -20,8 +20,6 @@
     - [First Steps](#first-steps)
     - [Adding Routes to Express.js](#adding-routes-to-expressjs)
     - [Route and query parameters](#route-and-query-parameters)
-    - [Express Routers](#express-routers)
-    - [C.R.U.D](#crud)
 
 ## Creating and Importing Javascript Modules
 We can create  custom modules with some functionallities that can be exported and imported in any other javascript module.
@@ -503,8 +501,87 @@ In addtion we can add a start script in pour package json to  init our server wi
 
 With the previous steps We can create our 'app.js' where we'll define our server:
 ```
+// import express
+const express = require('express');
+
+// define an express application
+const app = express();
+
+// routing
+app.get('/', (request, response) => {
+    response.send('My first Http server built with Node.js + Express.js');
+});
+
+// server listening
+const PORT = process.env.PORT || 3000;
+app.listen( PORT, ()=>console.log(`Server listening at port ${PORT}`));
+
 ```
 ### Adding Routes to Express.js
+We can add a couple of routes by importing them from our **route's folder**:
+```
+// routing using controllers
+app.use(express.urlencoded({extended:false}));
+app.use(express.json());
+
+app.use('/api/courses', coursesRoutes);
+app.use('/api/programming',programmingRoutes);
+app.use('/api/maths', mathsRoutes);
+```
+Our routes script will be declared as a couple of express router middleware calling the code's controllers that will have declared the route's logic.
+
+In this case We can see as example a route to call (GET) all the programming courses of our json file (used as database):
+
+```
+const dbRouter = express.Router();
+
+// importing controlelrs
+const {
+  getProgrammingCoursesByLanguage,
+} = require("../controllers/programming.controllers");
+
+// Routing
+dbRouter.get("/:language", getProgrammingCoursesByLanguage);
+
+// exporting
+module.exports = dbRouter;
+```
+- **NOTE:** As We can see the router middleware is calling a controller function from the current path.
 ### Route and query parameters
-### Express Routers
-### C.R.U.D
+In this section We'll see how works a controller's logic that will deal with the route's information to process the final data to send to the client:
+ 
+```
+// importing database (for learning)
+const { courses } = require('../db/courses');
+
+// GET Requests
+const getProgrammingCoursesByLanguage = (request, response) => {
+    // extract language
+    const language = request.params.language;
+
+    // extract courses by language
+    const result = courses.programming.filter(course => course.language === language);
+    
+    // check for no content case
+    if(result.length === 0){
+        return response.status(404).send(`No ${language} courses found`);
+    }
+
+    if(request.query['sort'] === 'views'){
+        return response.status(200).send(JSON.stringify(result.sort((a,b)=> b.views - a.views )));
+    }
+    
+    response.status(200).send(JSON.stringify(result));  
+};
+
+// POST Requests
+...
+
+// PUT Requests
+...
+
+// DELETE Request
+...
+
+module.exports = { getProgrammingCoursesByLanguage };
+```
